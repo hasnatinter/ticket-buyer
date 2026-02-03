@@ -1,0 +1,31 @@
+services: 
+  web:
+    build: 
+     dockerfile: ./Dockerfile
+    restart: always
+    ports: 
+      - "8081:8080"
+    environment:
+      MYSQL_USER: hasnat
+      MYSQL_PASSWORD: password
+      MYSQL_ADDRESS: database
+      MYSQL_DATABASE: ticket
+    volumes:
+      - ./code:/usr/src/app/code
+    networks:
+      - default
+  database: 
+    image: arm64v8/mysql:8.0.44
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: hasnat
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: ticket
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      - default
+
+networks:
+  default:
