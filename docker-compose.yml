@@ -6,10 +6,10 @@ services:
     ports: 
       - "8081:8080"
     environment:
-      MYSQL_USER: hasnat
-      MYSQL_PASSWORD: password
-      MYSQL_ADDRESS: database
-      MYSQL_DATABASE: ticket
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ADDRESS: ${MYSQL_ADDRESS}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - ./code:/usr/src/app/code
     networks:
@@ -18,10 +18,10 @@ services:
     image: arm64v8/mysql:8.0.44
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: hasnat
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: ticket
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - ./data:/var/lib/mysql
     networks:
