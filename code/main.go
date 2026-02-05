@@ -1,70 +1,50 @@
 package main
 
 import (
-    "net/http"
-	"github.com/go-sql-driver/mysql"
-	"github.com/go-playground/validator/v10"
-	"os"
 	"database/sql"
-	"log"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"github.com/hasnatinter/ticket-buyer/conn"
+	"github.com/go-playground/validator/v10"
 )
 
 var db *sql.DB
 
 type Venue struct {
-	ID int64
-	Name string 
+	ID   int64
+	Name string
 }
 
 type Performer struct {
-	ID int64
-	Name string 
+	ID   int64
+	Name string
 }
 
 type Event struct {
-	ID int64
-	Name string 
-	Description string 
-	VenueId int64
-	StartTime string
-	Venue Venue
-    PerformerId int64
-    Performer Performer
+	ID           int64
+	Name         string
+	Description  string
+	VenueId      int64
+	StartTime    string
+	Venue        Venue
+	PerformerId  int64
+	Performer    Performer
 	TotalTickets int64
 }
 
 type EventFilter struct {
 	StartDate string `validate:"omitempty,datetime=2006-01-02"`
-	EndDate string `validate:"omitempty,datetime=2006-01-02"`
-	Venue string `validate:"omitempty,alphanum"`
-	Category string `validate:"omitempty,alphanum"`
-	Limit string `validate:"required_with=Offset,omitempty,number"`
-	Offset string `validate:"omitempty,number"`
+	EndDate   string `validate:"omitempty,datetime=2006-01-02"`
+	Venue     string `validate:"omitempty,alphanum"`
+	Category  string `validate:"omitempty,alphanum"`
+	Limit     string `validate:"required_with=Offset,omitempty,number"`
+	Offset    string `validate:"omitempty,number"`
 }
 
-func connectDb() {
-	cfg := mysql.NewConfig()
-	cfg.User = os.Getenv("MYSQL_USER")
-	cfg.Passwd = os.Getenv("MYSQL_PASSWORD")
-	cfg.Net = "tcp"
-	cfg.Addr = os.Getenv("MYSQL_ADDRESS")
-	cfg.DBName = os.Getenv("MYSQL_DATABASE")
-	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN());
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	pingErr := db.Ping()
-    if pingErr != nil {
-        log.Fatal(pingErr)
-    }
-    fmt.Println("Connected!")
-}
 func main() {
-	connectDb()
+	db = conn.ConnectDb()
 	http.HandleFunc("GET /events", getEvents)
 	http.ListenAndServe("0.0.0.0:8080", nil)
 }
