@@ -9,7 +9,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-func ConnectDb() *sql.DB{
+func ConnectDb() *sql.DB {
 	var db *sql.DB
 	cfg := mysql.NewConfig()
 	cfg.User = os.Getenv("MYSQL_USER")

@@ -11,10 +11,8 @@ RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go get github.com/gin-gonic/gin
 RUN go get github.com/go-sql-driver/mysql 
 RUN go get github.com/go-playground/validator/v10 
-COPY ./code .
+COPY ./code ./code
+RUN go mod tidy
 
 ENTRYPOINT /go/bin/CompileDaemon --build="go build -o main ./code" --command=./main -polling
-
-#RUN go build -v -o /usr/bin/app ./...
-
 

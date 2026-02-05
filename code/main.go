@@ -52,7 +52,7 @@ func main() {
 func getEvents(w http.ResponseWriter, req *http.Request) {
 	input, err := ValidateInput(req)
 	if err != nil {
-    	fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, err.Error())
 		return
 	}
 
@@ -61,7 +61,7 @@ func getEvents(w http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 
-	response := map[string][]Event{"data": events} 
+	response := map[string][]Event{"data": events}
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	encoder.Encode(response)
@@ -74,13 +74,13 @@ func ValidateInput(req *http.Request) (*EventFilter, error) {
 	limit := req.FormValue("limit")
 	offset := req.FormValue("offset")
 	category := req.FormValue("category")
-	input := &EventFilter {
+	input := &EventFilter{
 		StartDate: start,
-		EndDate: end,
-		Venue: venue,
-		Limit: limit,
-		Offset: offset,
-		Category: category,
+		EndDate:   end,
+		Venue:     venue,
+		Limit:     limit,
+		Offset:    offset,
+		Category:  category,
 	}
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	err := validate.Struct(input)
@@ -92,12 +92,12 @@ func ValidateInput(req *http.Request) (*EventFilter, error) {
 
 func EventsQuery(input *EventFilter) ([]Event, error) {
 	sql := "SELECT e.id, e.name, e.description, p.name as performer_name, e.start_time as start_time, v.name as venue_name, " +
-		" (select count(*) from ticket WHERE status = 'available' AND event_id = e.id) as total_tickets" +	
+		" (select count(*) from ticket WHERE status = 'available' AND event_id = e.id) as total_tickets" +
 		" FROM event e" +
 		" LEFT JOIN venue v ON v.id = e.venue_id" +
-		" LEFT JOIN performer p ON p.id = e.performer_id" + 
+		" LEFT JOIN performer p ON p.id = e.performer_id" +
 		" WHERE 1"
-	var args []any;
+	var args []any
 	if len(input.StartDate) > 0 {
 		args = append(args, input.StartDate)
 		sql = sql + " AND start_time >= ?"
@@ -114,7 +114,7 @@ func EventsQuery(input *EventFilter) ([]Event, error) {
 		args = append(args, input.Category)
 		sql = sql + " AND e.category = ?"
 	}
-	sql += " ORDER BY e.start_time";
+	sql += " ORDER BY e.start_time"
 	if len(input.Limit) > 0 {
 		args = append(args, input.Limit)
 		sql = sql + " LIMIT ?"
@@ -127,8 +127,8 @@ func EventsQuery(input *EventFilter) ([]Event, error) {
 	rows, err := stmt.Query(args...)
 	if err != nil {
 		log.Fatal(err)
-    }
-	
+	}
+
 	var events []Event
 	defer rows.Close()
 	for rows.Next() {
@@ -139,8 +139,8 @@ func EventsQuery(input *EventFilter) ([]Event, error) {
 		events = append(events, event)
 	}
 	if err := rows.Err(); err != nil {
-		return nil,  err
-    }
+		return nil, err
+	}
 	return events, nil
-		
+
 }
