@@ -6,8 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"github.com/hasnatinter/ticket-buyer/conn"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-playground/validator/v10"
+	"github.com/hasnatinter/ticket-buyer/conn"
 )
 
 var db *sql.DB
@@ -45,8 +48,13 @@ type EventFilter struct {
 
 func main() {
 	db = conn.ConnectDb()
-	http.HandleFunc("GET /events", getEvents)
-	http.ListenAndServe("0.0.0.0:8080", nil)
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Get("/events", getEvents)
+
+	http.ListenAndServe("0.0.0.0:8080", r)
 }
 
 func getEvents(w http.ResponseWriter, req *http.Request) {
