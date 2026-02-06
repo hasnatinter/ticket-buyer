@@ -144,5 +144,4 @@ func EventsQuery(input *EventFilter, db *sql.DB) ([]Event, error) {
 		return nil, err
 	}
 	return events, nil
-
 }
