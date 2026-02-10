@@ -1,13 +1,15 @@
 package api
 
 import (
-	"database/sql"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/jackc/pgx/v5"
 )
 
 type Venue struct {
@@ -25,7 +27,7 @@ type Event struct {
 	Name         string
 	Description  string
 	VenueId      int64
-	StartTime    string
+	StartTime    time.Time
 	Venue        Venue
 	PerformerId  int64
 	Performer    Performer
@@ -42,10 +44,10 @@ type EventFilter struct {
 }
 
 type EventsApi struct {
-	db *sql.DB
+	db *pgx.Conn
 }
 
-func New(db *sql.DB) *EventsApi {
+func New(db *pgx.Conn) *EventsApi {
 	return &EventsApi{
 		db,
 	}
@@ -54,7 +56,7 @@ func New(db *sql.DB) *EventsApi {
 func (e *EventsApi) GetEvents(w http.ResponseWriter, req *http.Request) {
 	input, err := ValidateInput(req)
 	if err != nil {
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "%s", err.Error())
 		return
 	}
 
@@ -66,7 +68,9 @@ func (e *EventsApi) GetEvents(w http.ResponseWriter, req *http.Request) {
 	response := map[string][]Event{"data": events}
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
-	encoder.Encode(response)
+	if err := encoder.Encode(response); err != nil {
+		log.Fatal(err.Error())
+	}
 }
 
 func ValidateInput(req *http.Request) (*EventFilter, error) {
@@ -92,45 +96,46 @@ func ValidateInput(req *http.Request) (*EventFilter, error) {
 	return input, nil
 }
 
-func EventsQuery(input *EventFilter, db *sql.DB) ([]Event, error) {
+func EventsQuery(input *EventFilter, conn *pgx.Conn) ([]Event, error) {
 	sql := "SELECT e.id, e.name, e.description, p.name as performer_name, e.start_time as start_time, v.name as venue_name, " +
 		" (select count(*) from ticket WHERE status = 'available' AND event_id = e.id) as total_tickets" +
 		" FROM event e" +
 		" LEFT JOIN venue v ON v.id = e.venue_id" +
 		" LEFT JOIN performer p ON p.id = e.performer_id" +
-		" WHERE 1"
-	var args []any
+		" WHERE 1=1"
+	args := make(map[string]any, 0)
 	if len(input.StartDate) > 0 {
-		args = append(args, input.StartDate)
-		sql = sql + " AND start_time >= ?"
+		args["start"] = input.StartDate
+		sql = sql + " AND start_time >= @start"
 	}
 	if len(input.EndDate) > 0 {
-		args = append(args, input.EndDate)
-		sql = sql + " AND start_time <= ?"
+		args["end"] = input.EndDate
+		sql = sql + " AND start_time <= @end"
 	}
 	if len(input.Venue) > 0 {
-		args = append(args, input.Venue)
-		sql = sql + " AND v.name = ?"
+		args["venue"] = input.Venue
+		sql = sql + ` AND v.name = @venue`
 	}
+
 	if len(input.Category) > 0 {
-		args = append(args, input.Category)
-		sql = sql + " AND e.category = ?"
+		args["category"] = input.EndDate
+		sql = sql + " AND e.category = @category"
 	}
 	sql += " ORDER BY e.start_time"
 	if len(input.Limit) > 0 {
-		args = append(args, input.Limit)
-		sql = sql + " LIMIT ?"
+		args["limit"] = input.Limit
+		sql = sql + " LIMIT @limit"
 	}
 	if len(input.Offset) > 0 {
-		args = append(args, input.Offset)
-		sql = sql + " OFFSET ?"
+		args["offset"] = input.Offset
+		sql = sql + " OFFSET @offset"
 	}
-	stmt, err := db.Prepare(sql)
-	rows, err := stmt.Query(args...)
+	fmt.Println(sql, args)
+
+	rows, err := conn.Query(context.Background(), sql, pgx.NamedArgs(args))
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	var events []Event
 	defer rows.Close()
 	for rows.Next() {

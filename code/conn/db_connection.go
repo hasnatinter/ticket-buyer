@@ -1,32 +1,27 @@
 package conn
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
-	"os"
 
-	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5"
 )
 
-func ConnectDb() *sql.DB {
-	var db *sql.DB
-	cfg := mysql.NewConfig()
-	cfg.User = os.Getenv("MYSQL_USER")
-	cfg.Passwd = os.Getenv("MYSQL_PASSWORD")
-	cfg.Net = "tcp"
-	cfg.Addr = os.Getenv("MYSQL_ADDRESS")
-	cfg.DBName = os.Getenv("MYSQL_DATABASE")
-	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN())
+const (
+	dbString = "postgres://hasnat:password@database:5432/ticket"
+)
+
+func ConnectDb() *pgx.Conn {
+	conn, err := pgx.Connect(context.Background(), dbString)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pingErr := db.Ping()
+	pingErr := conn.Ping(context.Background())
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
 	fmt.Println("Connected!")
-	return db
+	return conn
 }

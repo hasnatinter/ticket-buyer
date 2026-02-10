@@ -1,16 +1,28 @@
 package main
 
 import (
-	"database/sql"
-	"net/http"
-
 	"app/code/conn"
 	"app/code/router"
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func main() {
-	var db *sql.DB = conn.ConnectDb()
+	var db *pgx.Conn = conn.ConnectDb()
 	r := router.New(db)
 
-	http.ListenAndServe("0.0.0.0:8080", r)
+	s := &http.Server{
+		Addr:         ":8080",
+		Handler:      r,
+		ReadTimeout:  2 * time.Second,
+		WriteTimeout: 2 * time.Second,
+		IdleTimeout:  5 * time.Second,
+	}
+
+	if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatal("Server start failed")
+	}
 }
