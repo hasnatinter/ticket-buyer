@@ -1,6 +1,7 @@
 package conn
 
 import (
+	"app/code/config"
 	"context"
 	"fmt"
 	"log"
@@ -9,10 +10,12 @@ import (
 )
 
 const (
-	dbString = "postgres://hasnat:password@database:5432/ticket"
+	fmtDBString = "postgres://%s:%s@%s:%d/%s"
 )
 
 func ConnectDb() *pgx.Conn {
+	c := config.NewDB()
+	dbString := fmt.Sprintf(fmtDBString, c.Username, c.Password, c.Host, c.Port, c.DBName)
 	conn, err := pgx.Connect(context.Background(), dbString)
 	if err != nil {
 		log.Fatal(err)

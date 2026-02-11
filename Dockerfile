@@ -13,9 +13,10 @@ RUN go get github.com/go-sql-driver/mysql
 RUN go get github.com/go-playground/validator/v10
 RUN go get github.com/pressly/goose/v3
 RUN go get github.com/jackc/pgx/v5
+RUN go get github.com/joeshaw/envdecode 
+
 COPY ./code ./code
 RUN go mod tidy
 RUN go build -o ./bin/migrate ./code/migrate
 
 ENTRYPOINT /go/bin/CompileDaemon --build="go build -o main ./code" --command=./main -polling
-
