@@ -10,7 +10,9 @@ services:
       - ./code:/usr/src/app/code
     networks:
       - default
-  database: 
+    depends_on:
+      - db
+  db: 
     image: postgres:alpine
     restart: always
     environment:
