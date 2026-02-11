@@ -5,11 +5,7 @@ services:
     restart: always
     ports: 
       - "8081:8080"
-    environment:
-      MYSQL_USER: ${POSTGRES_USER}
-      MYSQL_PASSWORD: ${POSTGRES_PASSWORD}
-      MYSQL_ADDRESS: ${POSTGRES_ADDRESS}
-      MYSQL_DATABASE: ${POSTGRES_DATABASE}
+    env_file: .env
     volumes:
       - ./code:/usr/src/app/code
     networks:
