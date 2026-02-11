@@ -1,0 +1,88 @@
+basePath: /v1
+definitions:
+  error.Error:
+    properties:
+      error:
+        type: string
+    type: object
+  event.Event:
+    properties:
+      description:
+        type: string
+      id:
+        format: int64
+        type: integer
+      name:
+        type: string
+      performer:
+        $ref: '#/definitions/event.Performer'
+      performerId:
+        format: int64
+        type: integer
+      startTime:
+        type: string
+      totalTickets:
+        format: int64
+        type: integer
+      venue:
+        $ref: '#/definitions/event.Venue'
+      venueId:
+        format: int64
+        type: integer
+    type: object
+  event.Performer:
+    properties:
+      id:
+        format: int64
+        type: integer
+      name:
+        type: string
+    type: object
+  event.Venue:
+    properties:
+      id:
+        format: int64
+        type: integer
+      name:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: safder.h@outlook.com
+    name: Ahmed Hasnat Safder
+  description: This is a sample RESTful API with limited features of ticket master
+  title: APP API
+  version: "1.0"
+paths:
+  /../healthcheck:
+    get:
+      description: Read health
+      responses:
+        "200":
+          description: OK
+      summary: Read health
+      tags:
+      - health
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: List events
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/event.Event'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.Error'
+      summary: List events
+      tags:
+      - events
+swagger: "2.0"
