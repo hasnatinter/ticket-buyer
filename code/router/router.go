@@ -1,8 +1,8 @@
 package router
 
 import (
-	"app/code/api"
-	"net/http"
+	"app/code/api/resources/event"
+	"app/code/api/resources/health"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -14,13 +14,11 @@ func New(conn *pgx.Conn) *chi.Mux {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Get("/healthcheck", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte("-"))
-	})
+	r.Get("/healthcheck", health.Read)
 
 	r.Route("/v1", func(r chi.Router) {
-		events := api.New(conn)
-		r.Get("/events", events.GetEvents)
+		events := event.New(conn)
+		r.Get("/events", events.Read)
 	})
 	return r
 }

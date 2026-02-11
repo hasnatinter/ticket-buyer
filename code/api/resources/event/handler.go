@@ -1,4 +1,4 @@
-package api
+package event
 
 import (
 	"context"
@@ -53,7 +53,17 @@ func New(db *pgx.Conn) *EventsApi {
 	}
 }
 
-func (e *EventsApi) GetEvents(w http.ResponseWriter, req *http.Request) {
+// List godoc
+//
+//	@summary        List events
+//	@description    List events
+//	@tags           events
+//	@accept         json
+//	@produce        json
+//	@success        200 {array}     Event
+//	@failure        500 {object}    error.Error
+//	@router         /events [get]
+func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
 	input, err := ValidateInput(req)
 	if err != nil {
 		fmt.Fprintf(w, "%s", err.Error())
@@ -130,7 +140,6 @@ func EventsQuery(input *EventFilter, conn *pgx.Conn) ([]Event, error) {
 		args["offset"] = input.Offset
 		sql = sql + " OFFSET @offset"
 	}
-	fmt.Println(sql, args)
 
 	rows, err := conn.Query(context.Background(), sql, pgx.NamedArgs(args))
 	if err != nil {
