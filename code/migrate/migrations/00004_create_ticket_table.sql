@@ -5,7 +5,7 @@ CREATE TABLE ticket (
   id integer primary key generated always as identity,
   seat varchar(20) NOT NULL,
   price float DEFAULT NULL,
-  event_id int REFERENCES ticket(id),
+  event_id int REFERENCES event(id),
   user_id int DEFAULT NULL,
   status enum_ticket_status DEFAULT 'available'
 ) 
