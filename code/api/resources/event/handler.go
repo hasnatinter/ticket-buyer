@@ -6,33 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
 )
-
-type Venue struct {
-	ID   int64
-	Name string
-}
-
-type Performer struct {
-	ID   int64
-	Name string
-}
-
-type Event struct {
-	ID           int64
-	Name         string
-	Description  string
-	VenueId      int64
-	StartTime    time.Time
-	Venue        Venue
-	PerformerId  int64
-	Performer    Performer
-	TotalTickets int64
-}
 
 type EventFilter struct {
 	StartDate string `validate:"omitempty,datetime=2006-01-02"`
@@ -126,7 +103,6 @@ func EventsQuery(input *EventFilter, conn *pgx.Conn) ([]Event, error) {
 		args["venue"] = input.Venue
 		sql = sql + ` AND v.name = @venue`
 	}
-
 	if len(input.Category) > 0 {
 		args["category"] = input.EndDate
 		sql = sql + " AND e.category = @category"
