@@ -8,7 +8,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jackc/pgx/v5"
+	"gorm.io/gorm"
 )
 
 //  @title          APP API
@@ -21,7 +21,7 @@ import (
 // @host       localhost:8081
 // @basePath   /v1
 func main() {
-	var db *pgx.Conn = conn.ConnectDb()
+	var db *gorm.DB = conn.ConnectDb()
 	r := router.New(db)
 	c := config.New()
 

@@ -14,6 +14,9 @@ RUN go get github.com/go-playground/validator/v10
 RUN go get github.com/pressly/goose/v3
 RUN go get github.com/jackc/pgx/v5
 RUN go get github.com/joeshaw/envdecode
+RUN go get gorm.io/gorm
+RUN go get gorm.io/driver/postgres
+RUN go get gorm.io/gorm/logger
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 COPY ./code ./code

@@ -2,29 +2,37 @@ package conn
 
 import (
 	"app/code/config"
-	"context"
 	"fmt"
 	"log"
 
-	"github.com/jackc/pgx/v5"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 )
 
 const (
 	fmtDBString = "postgres://%s:%s@%s:%d/%s"
 )
 
-func ConnectDb() *pgx.Conn {
+func ConnectDb() *gorm.DB {
 	c := config.NewDB()
+	var logLevel gormlogger.LogLevel
+	if c.Debug {
+		logLevel = gormlogger.Info
+	} else {
+		logLevel = gormlogger.Error
+	}
 	dbString := fmt.Sprintf(fmtDBString, c.Username, c.Password, c.Host, c.Port, c.DBName)
-	conn, err := pgx.Connect(context.Background(), dbString)
+	conn, err := gorm.Open(postgres.Open(dbString), &gorm.Config{
+		Logger: gormlogger.Default.LogMode(logLevel),
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		}})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pingErr := conn.Ping(context.Background())
-	if pingErr != nil {
-		log.Fatal(pingErr)
-	}
 	fmt.Println("Connected!")
 	return conn
 }

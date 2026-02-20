@@ -1,14 +1,12 @@
 package event
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/jackc/pgx/v5"
+	"gorm.io/gorm"
 )
 
 type EventFilter struct {
