@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	errs "app/code/api/resources/common/errors"
+	validatorUtil "app/code/validator"
+
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
@@ -41,13 +44,18 @@ func New(db *gorm.DB) *EventsApi {
 func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
 	input, err := ValidateInput(req)
 	if err != nil {
-		fmt.Fprintf(w, "%s", err.Error())
+		fmt.Println(err)
+		respBody, err := json.Marshal(validatorUtil.ToErrResponse(err))
+		if err != nil {
+			errs.ServerError(w, errs.RespJSONDecodeFailure)
+		}
+		errs.ValidationError(w, respBody)
 		return
 	}
 	ctx := req.Context()
 	events, err := e.repo.ListWithTickets(input, ctx)
 	if err != nil {
-		// handle later
+		errs.ServerError(w, errs.RespDBDataAccessFailure)
 		return
 	}
 
@@ -58,7 +66,7 @@ func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(events.ToDTO()); err != nil {
-		// handle later
+		errs.ServerError(w, errs.RespJSONEncodeFailure)
 		return
 	}
 }
