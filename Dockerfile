@@ -18,6 +18,7 @@ RUN go get gorm.io/gorm
 RUN go get gorm.io/driver/postgres
 RUN go get gorm.io/gorm/logger
 RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go get github.com/rs/zerolog
 
 COPY ./code ./code
 RUN go mod tidy

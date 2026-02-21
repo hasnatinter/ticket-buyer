@@ -3,7 +3,9 @@ package main
 import (
 	"app/code/config"
 	"app/code/conn"
+	lg "app/code/logger"
 	"app/code/router"
+	"app/code/server"
 	"fmt"
 	"log"
 	"net/http"
@@ -21,9 +23,12 @@ import (
 // @host       localhost:8081
 // @basePath   /v1
 func main() {
-	var db *gorm.DB = conn.ConnectDb()
-	r := router.New(db)
 	c := config.New()
+
+	l := lg.New(c.Server.Debug)
+	var db *gorm.DB = conn.ConnectDb()
+	server := server.New(l, db)
+	r := router.New(server)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", c.Server.Port),
