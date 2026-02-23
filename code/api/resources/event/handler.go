@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	errs "app/code/api/resources/common/errors"
+	"app/code/api/resources/common/errors"
+	"app/code/api/resources/ticket"
 	validatorUtil "app/code/validator"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
@@ -38,24 +40,24 @@ func New(db *gorm.DB) *EventsApi {
 //	@tags           events
 //	@accept         json
 //	@produce        json
-//	@success        200 {array}     Event
-//	@failure        500 {object}    error.Error
+//	@success        200 {array}     event.EventDTO
+//	@failure        500 {object}    errors.Error
 //	@router         /events [get]
-func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
+func (e *EventsApi) List(w http.ResponseWriter, req *http.Request) {
 	input, err := ValidateInput(req)
 	if err != nil {
 		fmt.Println(err)
 		respBody, err := json.Marshal(validatorUtil.ToErrResponse(err))
 		if err != nil {
-			errs.ServerError(w, errs.RespJSONDecodeFailure)
+			errors.ServerError(w, errors.RespJSONDecodeFailure)
 		}
-		errs.ValidationError(w, respBody)
+		errors.ValidationError(w, respBody)
 		return
 	}
 	ctx := req.Context()
 	events, err := e.repo.ListWithTickets(input, ctx)
 	if err != nil {
-		errs.ServerError(w, errs.RespDBDataAccessFailure)
+		errors.ServerError(w, errors.RespDBDataAccessFailure)
 		return
 	}
 
@@ -66,7 +68,43 @@ func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(events.ToDTO()); err != nil {
-		errs.ServerError(w, errs.RespJSONEncodeFailure)
+		errors.ServerError(w, errors.RespJSONEncodeFailure)
+		return
+	}
+}
+
+// Read godoc
+//
+//	@summary        Read event
+//	@description    Read event
+//	@tags           events
+//	@accept         json
+//	@produce        json
+//	@param			id	path		string	true	"Event ID"
+//	@success        200 {array}     event.EventDTO
+//	@failure        500 {object}    errors.Error
+//	@router         /events/{id} [get]
+func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
+	id := chi.URLParam(req, "id")
+	if len(id) == 0 {
+		errors.BadRequest(w, errors.RespInvalidURLParamID)
+	}
+	ctx := req.Context()
+	event, err := e.repo.ReadWithTickets(id, ctx)
+	if err != nil {
+		errors.ServerError(w, errors.RespDBDataAccessFailure)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if event == nil {
+		fmt.Fprint(w, "[]")
+		return
+	}
+	tRepo := ticket.NewRepository(e.repo.db)
+	tickets, _ := tRepo.ListForEvent(id, ctx)
+
+	if err := json.NewEncoder(w).Encode(event.ToDTO(tickets)); err != nil {
+		errors.ServerError(w, errors.RespJSONEncodeFailure)
 		return
 	}
 }

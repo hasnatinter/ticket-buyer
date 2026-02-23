@@ -20,7 +20,8 @@ func New(server *server.Server) *chi.Mux {
 
 	r.Route("/v1", func(r chi.Router) {
 		events := event.New(server.DB())
-		r.Method("GET", "/events", requestlog.NewHandler(events.Read, l))
+		r.Method("GET", "/events", requestlog.NewHandler(events.List, l))
+		r.Method("GET", "/events/{id}", requestlog.NewHandler(events.Read, l))
 	})
 	return r
 }

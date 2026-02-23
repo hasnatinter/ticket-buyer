@@ -47,3 +47,15 @@ func (r *Repository) ListWithTickets(filter *EventFilter, ctx context.Context) (
 	}
 	return events, nil
 }
+
+func (r *Repository) ReadWithTickets(id string, ctx context.Context) (*Event, error) {
+	event := &Event{}
+	queryDB := r.db.WithContext(ctx)
+	queryDB = r.db.Joins("Venue").Joins("Performer")
+	queryDB.Select("event.*")
+	queryDB.Where("event.id = ?", id)
+	if err := queryDB.First(event).Error; err != nil {
+		return nil, err
+	}
+	return event, nil
+}
