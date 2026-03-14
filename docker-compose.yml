@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
   db: 
-    image: postgres:alpine
+    image: postgres:18-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
