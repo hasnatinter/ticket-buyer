@@ -1,9 +1,9 @@
 package event
 
 import (
-	"app/internal/api/resources/performer"
-	"app/internal/api/resources/ticket"
-	"app/internal/api/resources/venue"
+	"app/internal/api/performer"
+	"app/internal/api/ticket"
+	"app/internal/api/venue"
 	"database/sql"
 	"strconv"
 	"time"

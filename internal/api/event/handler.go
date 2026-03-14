@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"app/internal/api/resources/common/errors"
-	"app/internal/api/resources/ticket"
+	"app/internal/api/ticket"
+	"app/pkg/errors"
 	validatorUtil "app/pkg/validator"
 
 	"github.com/go-chi/chi/v5"

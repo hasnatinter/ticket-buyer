@@ -1,8 +1,8 @@
 package router
 
 import (
-	"app/internal/api/resources/event"
-	"app/internal/api/resources/health"
+	"app/internal/api/event"
+	"app/internal/api/health"
 	"app/internal/server"
 	"app/pkg/middleware/requestlog"
 
