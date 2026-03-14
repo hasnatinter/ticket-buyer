@@ -1,0 +1,165 @@
+Last login: Fri Mar 13 11:02:38 on ttys000
+hasnat@Hasnats-MacBook-Air go % docker compose logs -f web
+web-1  | 2026/03/13 10:56:22 Running build command!
+web-1  | 2026/03/13 10:56:23 Build ok.
+web-1  | 2026/03/13 10:56:23 Restarting the given command.
+web-1  | 2026/03/13 10:56:23 stdout: Connected!
+web-1  | 2026/03/13 10:58:36 stdout: 2026/03/13 10:58:36 [6a14aa41b3ed/iofbRztHSG-000001] "GET http://localhost:8081/ HTTP/1.1" from 142.250.202.17:49930 - 404 19B in 543.083µs
+web-1  | 2026/03/13 10:58:36 stdout: 2026/03/13 10:58:36 [6a14aa41b3ed/iofbRztHSG-000002] "GET http://localhost:8081/favicon.ico HTTP/1.1" from 142.250.202.17:49930 - 404 19B in 6.583µs
+web-1  | 2026/03/13 10:58:43 stdout: 
+web-1  | 2026/03/13 10:58:43 stdout: 2026/03/13 10:58:43 /usr/src/app/code/api/resources/event/repository.go:45
+web-1  | 2026/03/13 10:58:43 stdout: [31.647ms] [rows:5] SELECT *, (select count(*) from ticket WHERE status = 'available' AND event_id = event.id) as total_tickets,"Venue"."id" AS "Venue__id","Venue"."created_at" AS "Venue__created_at","Venue"."updated_at" AS "Venue__updated_at","Venue"."deleted_at" AS "Venue__deleted_at","Venue"."name" AS "Venue__name" FROM "event" LEFT JOIN "venue" "Venue" ON "event"."venue_id" = "Venue"."id" AND "Venue"."deleted_at" IS NULL WHERE "event"."deleted_at" IS NULL
+web-1  | 2026/03/13 10:58:43 stderr: {"level":"info","received_time":"2026-03-13T10:58:43Z","method":"GET","url":"/v1/events","header_size":414,"body_size":0,"agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0","referer":"","proto":"HTTP/1.1","remote_ip":"142.250.202.17","server_ip":"172.18.0.3","status":200,"resp_header_size":34,"resp_body_size":692,"latency":33.116959,"time":"2026-03-13T10:58:43Z"}
+web-1  | 2026/03/13 10:58:43 stdout: 2026/03/13 10:58:43 [6a14aa41b3ed/iofbRztHSG-000003] "GET http://localhost:8081/v1/events HTTP/1.1" from 142.250.202.17:61330 - 200 692B in 33.236958ms
+web-1  | 2026/03/13 10:58:43 stdout: 2026/03/13 10:58:43 [6a14aa41b3ed/iofbRztHSG-000004] "GET http://localhost:8081/favicon.ico HTTP/1.1" from 142.250.202.17:26785 - 404 19B in 17.875µs
+web-1 exited with code 137
+hasnat@Hasnats-MacBook-Air go % docker compose ps                
+NAME       IMAGE                COMMAND                  SERVICE   CREATED        STATUS             PORTS
+go-db-1    postgres:18-alpine   "docker-entrypoint.s…"   db        23 hours ago   Up About an hour   0.0.0.0:5434->5432/tcp, [::]:5434->5432/tcp
+go-web-1   go-web               "/bin/sh -c '/go/bin…"   web       23 hours ago   Up About an hour   0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+hasnat@Hasnats-MacBook-Air go % docker compose exec -it go-web bin/bash
+service "go-web" is not running
+hasnat@Hasnats-MacBook-Air go % docker compose exec -it web bin/bash 
+OCI runtime exec failed: exec failed: unable to start container process: exec: "bin/bash": stat bin/bash: no such file or directory
+hasnat@Hasnats-MacBook-Air go % docker compose exec -it web bash    
+4ee3f5344719:/usr/src/app# swag init -g cmd/api/main.go -o .swagger -ot yaml
+2026/03/14 10:28:34 Generate swagger docs....
+2026/03/14 10:28:34 Generate general API Info, search dir:./
+2026/03/14 10:28:34 warning: failed to get package name in dir: ./, error: execute go list command, exit status 1, stdout:, stderr:no Go files in /usr/src/app
+2026/03/14 10:28:34 cannot parse source files /usr/src/app/cmd/api/main.go: open /usr/src/app/cmd/api/main.go: no such file or directory
+4ee3f5344719:/usr/src/app# swag init -g code/main.go -o .swagger -ot yaml
+2026/03/14 10:28:59 Generate swagger docs....
+2026/03/14 10:28:59 Generate general API Info, search dir:./
+2026/03/14 10:28:59 warning: failed to get package name in dir: ./, error: execute go list command, exit status 1, stdout:, stderr:no Go files in /usr/src/app
+2026/03/14 10:28:59 Generating event.EventDTO
+2026/03/14 10:28:59 Generating ticket.TicketDTO
+2026/03/14 10:28:59 Generating errors.Error
+2026/03/14 10:28:59 create swagger.yaml at .swagger/swagger.yaml
+4ee3f5344719:/usr/src/app# swag init -g code/main.go  -ot yaml
+2026/03/14 10:29:34 Generate swagger docs....
+2026/03/14 10:29:34 Generate general API Info, search dir:./
+2026/03/14 10:29:34 warning: failed to get package name in dir: ./, error: execute go list command, exit status 1, stdout:, stderr:no Go files in /usr/src/app
+2026/03/14 10:29:34 Generating event.EventDTO
+2026/03/14 10:29:34 Generating ticket.TicketDTO
+2026/03/14 10:29:34 Generating errors.Error
+2026/03/14 10:29:34 create swagger.yaml at docs/swagger.yaml
+4ee3f5344719:/usr/src/app# swag init -g code/main.go -o . -ot yaml --v3.1 --parseDependency && mv swagger.yaml openapi-v3.yml
+Incorrect Usage: flag provided but not defined: -v3.1
+
+NAME:
+   swag init - Create docs.go
+
+USAGE:
+   swag init [command options] [arguments...]
+
+OPTIONS:
+   --quiet, -q                                Make the logger quiet. (default: false)
+   --generalInfo value, -g value              Go file path in which 'swagger general API Info' is written (default: "main.go")
+   --dir value, -d value                      Directories you want to parse,comma separated and general-info file must be in the first one (default: "./")
+   --exclude value                            Exclude directories and files when searching, comma separated
+   --propertyStrategy value, -p value         Property Naming Strategy like snakecase,camelcase,pascalcase (default: "camelcase")
+   --output value, -o value                   Output directory for all the generated files(swagger.json, swagger.yaml and docs.go) (default: "./docs")
+   --outputTypes value, --ot value            Output types of generated files (docs.go, swagger.json, swagger.yaml) like go,json,yaml (default: "go,json,yaml")
+   --parseVendor                              Parse go files in 'vendor' folder, disabled by default (default: false)
+   --parseDependencyLevel value, --pdl value  Parse go files inside dependency folder, 0 disabled, 1 only parse models, 2 only parse operations, 3 parse all (default: 0)
+   --parseDependency, --pd                    Parse go files inside dependency folder, disabled by default (default: false)
+   --useStructName, --st                      Dont use those ugly full-path names when using dependency flag (default: false)
+   --markdownFiles value, --md value          Parse folder containing markdown files to use as description, disabled by default
+   --codeExampleFiles value, --cef value      Parse folder containing code example files to use for the x-codeSamples extension, disabled by default
+   --parseInternal                            Parse go files in internal packages, disabled by default (default: false)
+   --generatedTime                            Generate timestamp at the top of docs.go, disabled by default (default: false)
+   --parseDepth value                         Dependency parse depth (default: 100)
+   --requiredByDefault                        Set validation required for all fields by default (default: false)
+   --instanceName value                       This parameter can be used to name different swagger document instances. It is optional.
+   --overridesFile value                      File to read global type overrides from. (default: ".swaggo")
+   --parseGoList                              Parse dependency via 'go list' (default: true)
+   --parseExtension value                     Parse only those operations that match given extension
+   --tags value, -t value                     A comma-separated list of tags to filter the APIs for which the documentation is generated.Special case if the tag is prefixed with the '!' character then the APIs with that tag will be excluded
+   --templateDelims value, --td value         Provide custom delimiters for Go template generation. The format is leftDelim,rightDelim. For example: "[[,]]"
+   --packageName --output                     A package name of docs.go, using output directory name by default (check --output option)
+   --collectionFormat value, --cf value       Set default collection format (default: "csv")
+   --packagePrefix value                      Parse only packages whose import path match the given prefix, comma separated
+   --state value                              Set host state for swagger.json
+   --parseFuncBody                            Parse API info within body of functions in go files, disabled by default (default: false)
+   --help, -h                                 show help (default: false)
+   
+2026/03/14 10:31:25 flag provided but not defined: -v3.1
+4ee3f5344719:/usr/src/app# swag init -g code/main.go -o . -ot yaml --parseDependency && mv swagger.yaml openapi-v3.yml
+2026/03/14 10:31:57 Generate swagger docs....
+2026/03/14 10:31:57 Generate general API Info, search dir:./
+2026/03/14 10:31:57 warning: failed to get package name in dir: ./, error: execute go list command, exit status 1, stdout:, stderr:no Go files in /usr/src/app
+2026/03/14 10:31:57 Generating code_api_resources_event.EventDTO
+2026/03/14 10:31:57 Generating app_code_api_resources_ticket.TicketDTO
+2026/03/14 10:31:57 Generating app_code_api_resources_common_errors.Error
+2026/03/14 10:31:57 create swagger.yaml at swagger.yaml
+4ee3f5344719:/usr/src/app# swag init -g code/main.go -o . -ot yaml --parseDependency && mv swagger.yaml openapi-v3.yml
+2026/03/14 10:33:28 Generate swagger docs....
+2026/03/14 10:33:28 Generate general API Info, search dir:./
+2026/03/14 10:33:28 warning: failed to get package name in dir: ./, error: execute go list command, exit status 1, stdout:, stderr:no Go files in /usr/src/app
+2026/03/14 10:33:28 Generating code_api_resources_event.EventDTO
+2026/03/14 10:33:28 Generating app_code_api_resources_ticket.TicketDTO
+2026/03/14 10:33:28 Generating app_code_api_resources_common_errors.Error
+2026/03/14 10:33:28 create swagger.yaml at swagger.yaml
+4ee3f5344719:/usr/src/app# ls -la
+total 20916
+drwxr-xr-x    1 root     root          4096 Mar 14 10:33 .
+drwxr-xr-x    1 root     root          4096 Mar 13 11:09 ..
+drwxr-xr-x    2 root     root          4096 Mar 14 10:28 .swagger
+drwxr-xr-x    2 root     root          4096 Mar 13 11:16 bin
+drwxr-xr-x   14 root     root           448 Mar 14 10:21 code
+drwxr-xr-x    2 root     root          4096 Mar 14 10:29 docs
+-rw-r--r--    1 root     root          1250 Mar 13 11:16 go.mod
+-rw-r--r--    1 root     root          8389 Mar 13 11:16 go.sum
+-rwxr-xr-x    1 root     root      21368294 Mar 14 10:32 main
+-rw-r--r--    1 root     root          2300 Mar 14 10:33 openapi-v3.yml
+4ee3f5344719:/usr/src/app# vi openapi-v3.yml 
+
+basePath: /v1
+definitions:
+  app_code_api_resources_common_errors.Error:
+    properties:
+      error:
+        type: string
+    type: object
+  app_code_api_resources_ticket.TicketDTO:
+    properties:
+      id:
+        type: integer
+      seat:
+        type: string
+    type: object
+  code_api_resources_event.EventDTO:
+    properties:
+      category:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      start_time:
+        type: string
+      tickets:
+        items:
+          $ref: '#/definitions/app_code_api_resources_ticket.TicketDTO'
+        type: array
+      total_available_tickets:
+        type: string
+      venue:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: safder.h@outlook.com
+    name: Ahmed Hasnat Safder
+  description: This is a sample RESTful API with limited features of ticket master
+  title: APP API
+  version: "1.0"
+paths:
+  /../healthcheck:
+    get:
+      description: Read health
+      responses:
+        "200":
+          description: OK
+- openapi-v3.yml 1/100 1%
