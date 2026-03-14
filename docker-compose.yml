@@ -7,7 +7,10 @@ services:
       - "8081:8080"
     env_file: .env
     volumes:
-      - ./code:/usr/src/app/code
+      - ./pkg:/usr/src/app/pkg
+      - ./internal:/usr/src/app/internal
+      - ./cmd:/usr/src/app/cmd
+      - ./config:/usr/src/app/config
     networks:
       - default
     depends_on:
