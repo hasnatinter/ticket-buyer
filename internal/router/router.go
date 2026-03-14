@@ -1,10 +1,10 @@
 package router
 
 import (
-	"app/code/api/resources/event"
-	"app/code/api/resources/health"
-	"app/code/middleware/requestlog"
-	"app/code/server"
+	"app/internal/api/resources/event"
+	"app/internal/api/resources/health"
+	"app/internal/server"
+	"app/pkg/middleware/requestlog"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

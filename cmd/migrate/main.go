@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/code/config"
+	"app/config"
 	"flag"
 	"fmt"
 	"log"

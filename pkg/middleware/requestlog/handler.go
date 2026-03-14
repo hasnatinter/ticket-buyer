@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"app/code/logger"
+	"app/pkg/logger"
 )
 
 type Handler struct {

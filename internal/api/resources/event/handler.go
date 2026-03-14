@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"app/code/api/resources/common/errors"
-	"app/code/api/resources/ticket"
-	validatorUtil "app/code/validator"
+	"app/internal/api/resources/common/errors"
+	"app/internal/api/resources/ticket"
+	validatorUtil "app/pkg/validator"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"

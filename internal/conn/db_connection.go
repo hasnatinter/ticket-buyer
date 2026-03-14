@@ -1,7 +1,7 @@
 package conn
 
 import (
-	"app/code/config"
+	"app/config"
 	"fmt"
 	"log"
 

@@ -1,7 +1,7 @@
 package server
 
 import (
-	"app/code/logger"
+	"app/pkg/logger"
 
 	"gorm.io/gorm"
 )

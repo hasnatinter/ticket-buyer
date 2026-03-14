@@ -1,11 +1,11 @@
 package main
 
 import (
-	"app/code/config"
-	"app/code/conn"
-	lg "app/code/logger"
-	"app/code/router"
-	"app/code/server"
+	"app/config"
+	"app/internal/conn"
+	"app/internal/router"
+	"app/internal/server"
+	lg "app/pkg/logger"
 	"fmt"
 	"log"
 	"net/http"
