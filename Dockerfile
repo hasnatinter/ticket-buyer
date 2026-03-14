@@ -1,8 +1,8 @@
-FROM golang:1.25
+FROM golang:1.26rc2-alpine
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get -y install vim && apt-get install bash
+RUN apk update && apk add vim && apk add bash
 # pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
 COPY go.mod go.sum ./ 
 RUN go mod download
@@ -20,8 +20,11 @@ RUN go get gorm.io/gorm/logger
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go get github.com/rs/zerolog
 
-COPY ./code ./code
+COPY ./cmd ./cmd
+COPY ./internal ./internal
+COPY ./config ./config
+COPY ./pkg ./pkg
 RUN go mod tidy
-RUN go build -o ./bin/migrate ./code/migrate
+RUN go build -o ./bin/migrate ./cmd/migrate
 
-ENTRYPOINT /go/bin/CompileDaemon --build="go build -o main ./code" --command=./main -polling
+ENTRYPOINT /go/bin/CompileDaemon --build="go build -o main ./cmd/api" --command=./main -polling
