@@ -19,6 +19,7 @@ RUN go get gorm.io/driver/postgres
 RUN go get gorm.io/gorm/logger
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go get github.com/rs/zerolog
+RUN go get github.com/lib/pq 
 
 COPY ./cmd ./cmd
 COPY ./internal ./internal
