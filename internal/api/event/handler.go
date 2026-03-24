@@ -109,13 +109,13 @@ func (e *EventsApi) Read(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func ValidateInput(req *http.Request) (*EventFilter, error) {
-	start := req.FormValue("start")
-	end := req.FormValue("end")
-	venue := req.FormValue("venue")
-	limit := req.FormValue("limit")
-	offset := req.FormValue("offset")
-	category := req.FormValue("category")
+func ValidateInput(r *http.Request) (*EventFilter, error) {
+	start := r.FormValue("start")
+	end := r.FormValue("end")
+	venue := r.FormValue("venue")
+	limit := r.FormValue("limit")
+	offset := r.FormValue("offset")
+	category := r.FormValue("category")
 	input := &EventFilter{
 		StartDate: start,
 		EndDate:   end,
