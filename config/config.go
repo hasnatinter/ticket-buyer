@@ -9,7 +9,6 @@ import (
 
 type Conf struct {
 	Server ConfSever
-	// DB     ConfDB
 }
 
 type ConfSever struct {
