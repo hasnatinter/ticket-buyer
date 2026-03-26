@@ -50,6 +50,10 @@ Now the project should be running on localhost:8081
 │   │   │   └── handler.go
 │   │   │   └── model.go
 │   │   │   └── repository.go
+│   │   ├── booking
+│   │   │   └── handler.go
+│   │   │   └── model.go
+│   │   │   └── repository.go
 │   │   ├── performer
 │   │   │   └── model.go
 │   │   ├── venue
