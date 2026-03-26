@@ -7,7 +7,7 @@ import (
 )
 
 type ErrorResponse struct {
-	Errors []string `json:""errors`
+	Errors []string `json:"errors"`
 }
 
 func ToErrResponse(err error) *ErrorResponse {
