@@ -1,5 +1,5 @@
 # ticket-buyer
-This project is a golang implementation for Ticker Master. This covers only a few features from the actual Ticker master app.
+This project is a REST api implementation for TickerMaster. Primarily written in Go, it covers only a few features from the actual TickerMaster app.
 
 ## 🚀 Getting started
 **Prerequisites:** Docker and Docker Compose installed
