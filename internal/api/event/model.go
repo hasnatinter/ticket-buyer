@@ -17,10 +17,10 @@ type Event struct {
 	Name         string
 	Description  sql.NullString
 	Category     sql.NullString
-	VenueId      int64
+	VenueId      int
 	Venue        venue.Venue
 	StartTime    *time.Time
-	PerformerId  int64
+	PerformerId  int
 	Performer    performer.Performer
 	Tickets      []ticket.Ticket
 	TotalTickets *int       `gorm:"->;column:total_tickets"`

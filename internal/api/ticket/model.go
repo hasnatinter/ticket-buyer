@@ -1,6 +1,7 @@
 package ticket
 
 import (
+	"database/sql"
 	"time"
 
 	"gorm.io/gorm"
@@ -8,11 +9,12 @@ import (
 
 type Ticket struct {
 	gorm.Model
-	ID        int64
+	ID        int
 	Seat      string
-	UserID    int64
+	UserID    int
 	Status    string
-	EventId   int64
+	EventId   int
+	BookingId sql.NullInt32
 	CreatedAt *time.Time `gorm:"autoCreateTime"`
 	UpdatedAt *time.Time `gorm:"autoCreateTime"`
 	DeletedAt *time.Time
@@ -21,7 +23,7 @@ type Ticket struct {
 type Tickets []Ticket
 
 type TicketDTO struct {
-	ID   int64  `json:"id"`
+	ID   int    `json:"id"`
 	Seat string `json:"seat"`
 }
 
