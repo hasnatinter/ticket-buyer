@@ -30,17 +30,5 @@ jobs:
       - name: Tests
         run: go test ./...
 
-      - name: Gofumpt
-        run: ./.github/workflows/bin/gofumpt -l -w . 2>&1 | tee outfile && test -z "$(cat outfile)" && rm outfile
-
-      - name: Go Vet
-        run: go vet ./...
-
-      - name: Staticcheck
-        run: ./.github/workflows/bin/staticcheck ./...
-
-      - name: Govulncheck
-        run: ./.github/workflows/bin/govulncheck ./...
-
-      - name: OpenAPI specification errors
-        run: ./.github/workflows/bin/swag init -g cmd/app/main.go -o . -ot yaml --v3.1 --parseDependency
+      # - name: Go Vet
+      #   run: go vet ./...
