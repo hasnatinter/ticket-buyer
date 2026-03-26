@@ -20,6 +20,7 @@ RUN go get gorm.io/gorm/logger
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go get github.com/rs/zerolog
 RUN go get github.com/lib/pq 
+RUN go install golang.org/x/tools/cmd/stringer@latest
 
 COPY ./cmd ./cmd
 COPY ./internal ./internal
