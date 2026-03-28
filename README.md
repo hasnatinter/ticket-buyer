@@ -28,11 +28,12 @@ Now the project should be running on localhost:8081
 ![db_schema](static/db_schema.png)
 
 ## Endpoints
-| Name        | HTTP Method | Route          |
-|-------------|-------------|----------------|
-| Health      | GET         | /healthcheck   |
-| List Events | GET         | /v1/events     |
-| Read Event  | GET         | /v1/events/{id}|
+| Name           | HTTP Method | Route          |
+|----------------|-------------|----------------|
+| Health         | GET         | /healthcheck   |
+| List Events    | GET         | /v1/events     |
+| Read Event     | GET         | /v1/events/{id}|
+| Create Booking | POST        | /v1/bookings   |
 
 ## 🗂️ Folder structure
 ```shell
