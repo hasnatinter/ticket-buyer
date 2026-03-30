@@ -31,6 +31,19 @@ func New(db *gorm.DB, logger *l.Logger) *BookingApi {
 	}
 }
 
+// Create godoc
+//
+//	@summary        Create booking
+//	@description    Create booking
+//	@tags           bookings
+//	@accept         json
+//	@produce        json
+//	@param			body body		CreateFilter true "Booking form"
+//	@success        201 {array}     booking.BookingDTO
+//	@failure		400 {object}	errors.Error
+//	@failure		422	{object}	errors.Errors
+//	@failure        500 {object}    errors.Error
+//	@router         /bookings/ [post]
 func (a *BookingApi) Create(w http.ResponseWriter, r *http.Request) {
 	input := &CreateFilter{}
 	json.NewDecoder(r.Body).Decode(&input)
@@ -54,6 +67,7 @@ func (a *BookingApi) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(booking.ToDTO(booking.Ticket)); err != nil {
 		errors.ServerError(w, errors.RespJSONEncodeFailure)
 		return
