@@ -12,13 +12,23 @@ import (
 func SetUp(t *testing.T) *gorm.DB {
 	t.Helper()
 
-	os.Setenv("DB_HOST", "test_db")
-	err := exec.Command("/usr/src/app/bin/migrate_test", "up").Run()
+	testHost := os.Getenv("DB_TEST_HOST")
+	if testHost == "" {
+		testHost = "test_db"
+	}
+	os.Setenv("DB_HOST", testHost)
+
+	migrateBin := os.Getenv("MIGRATE_BIN")
+	if migrateBin == "" {
+		migrateBin = "/usr/src/app/bin/migrate_test"
+	}
+	err := exec.Command(migrateBin, "up").Run()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() {
-		err = exec.Command("/usr/src/app/bin/migrate_test", "reset").Run()
+		err = exec.Command(migrateBin, "reset").Run()
 	})
 
 	db := conn.ConnectDb()

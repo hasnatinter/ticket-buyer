@@ -4,9 +4,39 @@ on:
   push:
     branches: [main]
 
+env: 
+  DB_USER: hasnat
+  DB_PASSWORD: postgres
+  DB_NAME: ticket
+  DB_PORT: 5432
+  DB_DEBUG: true
+  MIGRATE_BIN: ${{ github.workspace }}/bin/migrate_test
+  DB_TEST_HOST: localhost
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: hasnat
+          POSTGRES_DB: ticket
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
 
     steps:
       - name: Setup Go
@@ -26,6 +56,8 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Set up Test migrations
+        run: go build -o ./bin/migrate_test ./cmd/migrate
 
       - name: Tests
         run: go test ./...
