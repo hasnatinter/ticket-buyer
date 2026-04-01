@@ -7,7 +7,7 @@ This project is a REST api implementation for TickerMaster. Primarily written in
 git clone https://github.com/hasnatinter/ticket-buyer
 cp .env.sample .env
 docker compose up -d --build
-RUN migrations: ./bin/migrate up
+RUN ./bin/migrate up
 ```
 Now the project should be running on localhost:8081
 
@@ -87,3 +87,9 @@ Now the project should be running on localhost:8081
 
 ## 📖 API Documentation
 OpenAPI v3 spec available at `openapi-v3.yml`
+
+## 🧪 Testing
+Execute following command inside Docker container to run test cases
+```bash
+go test -v ./...
+```
