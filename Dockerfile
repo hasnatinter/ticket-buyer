@@ -27,6 +27,9 @@ COPY ./internal ./internal
 COPY ./config ./config
 COPY ./pkg ./pkg
 RUN go mod tidy
+ENV DB_HOST="test_db"
+RUN go build -o ./bin/migrate_test ./cmd/migrate
+ENV DB_HOST="db"
 RUN go build -o ./bin/migrate ./cmd/migrate
 
 ENTRYPOINT /go/bin/CompileDaemon --build="go build -o main ./cmd/api" --command=./main -polling
