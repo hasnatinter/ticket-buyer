@@ -13,7 +13,7 @@ type Ticket struct {
 	Seat      string
 	UserID    int
 	Status    string
-	EventId   int
+	EventId   int64
 	BookingId sql.NullInt32
 	CreatedAt *time.Time `gorm:"autoCreateTime"`
 	UpdatedAt *time.Time `gorm:"autoCreateTime"`

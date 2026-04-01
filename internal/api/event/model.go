@@ -13,14 +13,14 @@ import (
 
 type Event struct {
 	gorm.Model
-	ID           int
+	ID           int64
 	Name         string
 	Description  sql.NullString
 	Category     sql.NullString
-	VenueId      int
+	VenueId      int64
 	Venue        venue.Venue
 	StartTime    *time.Time
-	PerformerId  int
+	PerformerId  int64
 	Performer    performer.Performer
 	Tickets      []ticket.Ticket
 	TotalTickets *int       `gorm:"->;column:total_tickets"`
@@ -54,7 +54,7 @@ func (e *Event) ToDTO(tickets ticket.Tickets) *EventDTO {
 		}
 	}
 	return &EventDTO{
-		ID:           strconv.Itoa(e.ID),
+		ID:           strconv.Itoa(int(e.ID)),
 		Name:         e.Name,
 		StartTime:    e.StartTime.String(),
 		Venue:        e.Venue.Name,

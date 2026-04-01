@@ -11,8 +11,8 @@ import (
 type TicketState int
 
 const (
-	booked TicketState = iota
-	available
+	Booked TicketState = iota
+	Available
 )
 
 type Repository struct {
@@ -39,7 +39,7 @@ func (r *Repository) GetAvailableById(ids []int, ctx context.Context) (Tickets, 
 	var tickets []Ticket
 	err := r.db.WithContext(ctx).
 		Where("ID IN ?", ids).
-		Where("status = ?", available.String()).
+		Where("status = ?", Available.String()).
 		Clauses(clause.Locking{Strength: "UPDATE"}).
 		Find(&tickets).
 		Error
@@ -62,5 +62,13 @@ func (r *Repository) ListForEvent(eventId string, ctx context.Context) (Tickets,
 }
 
 func (r *Repository) BookTicket(ticket *Ticket, booking_id int, ctx context.Context) error {
-	return r.db.WithContext(ctx).Model(ticket).Updates(map[string]interface{}{"status": "booked", "booking_id": booking_id}).Error
+	return r.db.WithContext(ctx).Model(ticket).Updates(map[string]interface{}{"status": Booked, "booking_id": booking_id}).Error
+}
+
+func (r *Repository) Create(ctx context.Context, t *Ticket) (*Ticket, error) {
+	queryDB := r.db.WithContext(ctx)
+	if err := queryDB.Create(t).Error; err != nil {
+		return nil, err
+	}
+	return t, nil
 }

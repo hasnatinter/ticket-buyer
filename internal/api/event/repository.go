@@ -1,6 +1,7 @@
 package event
 
 import (
+	"app/internal/api/ticket"
 	"context"
 	"strconv"
 
@@ -19,9 +20,9 @@ func NewRepository(db *gorm.DB) *Repository {
 
 func (r *Repository) ListWithTickets(filter *EventFilter, ctx context.Context) (Events, error) {
 	events := make(Events, 0)
-	queryDB := r.db.Joins("Venue")
-	queryDB.WithContext(ctx)
-	queryDB = queryDB.Select("*, (select count(*) from ticket WHERE status = 'available' AND event_id = event.id) as total_tickets")
+	queryDB := r.db.WithContext(ctx)
+	queryDB = queryDB.Select("event.*, (select count(*) from ticket WHERE status = ? AND event_id = event.id) as total_tickets", ticket.Available.String())
+	queryDB = queryDB.Joins("Venue")
 	if len(filter.StartDate) > 0 {
 		queryDB.Where("start_time >= ?", filter.StartDate)
 	}
@@ -55,6 +56,14 @@ func (r *Repository) ReadWithTickets(id string, ctx context.Context) (*Event, er
 	queryDB.Select("event.*")
 	queryDB.Where("event.id = ?", id)
 	if err := queryDB.First(event).Error; err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
+func (r *Repository) Create(ctx context.Context, event *Event) (*Event, error) {
+	queryDB := r.db.WithContext(ctx)
+	if err := queryDB.Create(event).Error; err != nil {
 		return nil, err
 	}
 	return event, nil

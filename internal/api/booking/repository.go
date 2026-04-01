@@ -12,8 +12,8 @@ import (
 type BookingStatus int
 
 const (
-	reserved BookingStatus = iota
-	booked
+	Reserved BookingStatus = iota
+	Booked
 )
 
 type Repository struct {
@@ -24,6 +24,16 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		db: db,
 	}
+}
+
+func (r *Repository) FetchBookings(ctx context.Context) (Bookings, error) {
+	b := make([]Booking, 0)
+	queryDB := r.db.WithContext(ctx)
+	if err := queryDB.Find(&b).Error; err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
 
 // Create bookings in transcations, to prevent double booking against a ticket
