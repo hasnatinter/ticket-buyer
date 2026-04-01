@@ -1,8 +1,8 @@
 package middleware_test
 
 import (
+	"app/internal/api/health"
 	"app/pkg/middleware"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,7 +14,7 @@ func TestAllResponsesAreJsonEncoded(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/healthcheck", nil)
 	w := httptest.NewRecorder()
 
-	middleware.ContentTypeJson(http.HandlerFunc(testHandleFunc())).ServeHTTP(w, r)
+	middleware.ContentTypeJson(http.HandlerFunc(health.Read)).ServeHTTP(w, r)
 	res := w.Result()
 
 	if status := res.StatusCode; status != http.StatusOK {
@@ -23,11 +23,5 @@ func TestAllResponsesAreJsonEncoded(t *testing.T) {
 
 	if contentType := res.Header.Get(middleware.HeaderKeyContentType); contentType != middleware.HeaderValueContentType {
 		t.Errorf("Wrong content-type: got %v, expected %v", contentType, middleware.HeaderValueContentType)
-	}
-}
-
-func testHandleFunc() func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, testRespBody)
 	}
 }
