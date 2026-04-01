@@ -1,14 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE enum_ticket_status as enum('booked','available');
+CREATE TYPE enum_ticket_status AS ENUM('Booked','Available');
 CREATE TABLE ticket (
-  id integer primary key generated always as identity,
-  seat varchar(20) NOT NULL,
-  price float DEFAULT NULL,
-  event_id int REFERENCES event(id),
-  user_id int DEFAULT NULL,
-  status enum_ticket_status DEFAULT 'available'
-) 
+  id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  seat VARCHAR(20) NOT NULL,
+  price FLOAT DEFAULT NULL,
+  event_id INT REFERENCES event(id),
+  user_id INT DEFAULT NULL,
+  status enum_ticket_status DEFAULT 'Available'
+)
 -- +goose StatementEnd
 
 -- +goose Down
